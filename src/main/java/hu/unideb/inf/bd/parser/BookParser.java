@@ -60,7 +60,7 @@ public class BookParser {
 
 		String title = null;
 		try {
-			// TODO
+			title = doc.select("div.item-info > h1[itemprop=name]").first().text().trim();
 			logger.info("Title: {}", title);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");

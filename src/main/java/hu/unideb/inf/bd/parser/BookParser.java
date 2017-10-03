@@ -11,7 +11,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -142,6 +144,14 @@ public class BookParser {
 		String isbn10 = null;
 		try {
 			// TODO (Orbán István)
+			for(Element e : doc.select("ul.biblio-info > li")) {
+				Optional<Element> feltetelElement = e.getElementsByTag("label")
+						.stream().filter(it -> "ISBN10".equals(it.text())).findFirst();
+				if (feltetelElement.isPresent()) {
+					isbn10 = feltetelElement.get().nextElementSibling().text().trim();
+				}
+			}
+
 			logger.info("ISBN10: {}", isbn10);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");

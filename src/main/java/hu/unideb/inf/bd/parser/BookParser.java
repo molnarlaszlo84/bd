@@ -79,7 +79,7 @@ public class BookParser {
 
 		String publisher = null;
 		try {
-			// TODO
+			// TODO (Szabó Máté)
 			logger.info("Publisher: {}", publisher);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");
@@ -88,7 +88,7 @@ public class BookParser {
 
 		LocalDate date = null;
 		try {
-			// TODO
+			// TODO (Bódis Tünde)
 			logger.info("Date: {}", date);
 		} catch(Exception e) {
 		}
@@ -105,7 +105,7 @@ public class BookParser {
 		String format = null;
 		Integer	pages = null;
 		try {
-			// TODO
+			// TODO (Molnár László)
 			logger.info("Format: {}", format);
 			logger.info("Pages: {}", pages);
 		} catch(Exception e) {
@@ -116,7 +116,7 @@ public class BookParser {
 
 		Book.Dimensions	dimensions = new Book.Dimensions();
 		try {
-			// TODO
+			// TODO (Váradi Sándor)
 			logger.info("Dimensions: {}", dimensions);
 			book.setDimensions(dimensions);
 		} catch(Exception e) {
@@ -125,7 +125,7 @@ public class BookParser {
 
 		String language = null;
 		try {
-			// TODO
+			// TODO (Szabó Dávid)
 			logger.info("Language: {}", language);
 		} catch(Exception e) {
 		}
@@ -133,7 +133,7 @@ public class BookParser {
 
 		String edition = null;
 		try {
-			// TODO
+			// TODO (Barta Ferenc)
 			logger.info("Edition: {}", edition);
 		} catch(Exception e) {
 		}
@@ -141,7 +141,7 @@ public class BookParser {
 
 		String isbn10 = null;
 		try {
-			// TODO
+			// TODO (Orbán István)
 			logger.info("ISBN10: {}", isbn10);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");
@@ -150,7 +150,7 @@ public class BookParser {
 
 		String isbn13 = null;
 		try {
-			// TODO
+			// TODO (Burai Péter)
 			logger.info("ISBN13: {}", isbn13);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");
@@ -163,7 +163,7 @@ public class BookParser {
 		Price salePrice = null;
 		Price listPrice = null;
 		try {
-			// TODO
+			// TODO (Benőcs Péter, Gecző Gergő)
 			logger.info("Sale price: {}", salePrice);
 			logger.info("List price: {}", listPrice);
 		} catch(Exception e) {

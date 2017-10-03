@@ -79,7 +79,7 @@ public class BookParser {
 
 		String publisher = null;
 		try {
-			// TODO (Szabó Máté)
+			publisher = doc.select("ul.biblio-info > li > span >a[itemprop=publisher]").first().text().trim();
 			logger.info("Publisher: {}", publisher);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");

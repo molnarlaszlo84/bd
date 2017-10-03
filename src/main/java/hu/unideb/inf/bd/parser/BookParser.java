@@ -96,7 +96,7 @@ public class BookParser {
 
 		String description = null;
 		try {
-			// TODO
+			description = doc.select("div.item-description > div[itemprop=description]").first().childNode(0).toString().trim();
 			logger.info("Description: {}", description);
 		} catch(Exception e) {
 		}

@@ -1,0 +1,181 @@
+package hu.unideb.inf.bd.parser;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.math.BigDecimal;
+
+import java.text.DecimalFormat;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import hu.unideb.inf.jaxb.JAXBUtil;
+import hu.unideb.inf.bd.model.Book;
+import hu.unideb.inf.bd.model.Price;
+
+public class BookParser {
+
+	private static Logger logger = LoggerFactory.getLogger(BookParser.class);
+
+	public BookParser() {
+	}
+
+	public Book parse(String url) throws IOException {
+		Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
+		Book book = parse(doc);
+		book.setUri(url);
+		return book;
+	}
+
+	public Book parse(File file) throws IOException {
+		Document doc = Jsoup.parse(file, null);
+		Book book = parse(doc);
+		book.setUri(file.toURI().toString());
+		return book;
+	}
+
+	public Book parse(Document doc) throws IOException {
+		Book book = new Book();
+		ArrayList<Book.Author>	authors = new ArrayList<Book.Author>();
+		try {
+			// TODO
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setAuthors(authors);
+
+		String title = null;
+		try {
+			// TODO
+			logger.info("Title: {}", title);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setTitle(title);
+
+		String publisher = null;
+		try {
+			// TODO
+			logger.info("Publisher: {}", publisher);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setPublisher(publisher);
+
+		LocalDate date = null;
+		try {
+			// TODO
+			logger.info("Date: {}", date);
+		} catch(Exception e) {
+		}
+		book.setDate(date);
+
+		String description = null;
+		try {
+			// TODO
+			logger.info("Description: {}", description);
+		} catch(Exception e) {
+		}
+		book.setDescription(description);
+
+		String format = null;
+		Integer	pages = null;
+		try {
+			// TODO
+			logger.info("Format: {}", format);
+			logger.info("Pages: {}", pages);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setFormat(format);
+		book.setPages(pages);
+
+		Book.Dimensions	dimensions = new Book.Dimensions();
+		try {
+			// TODO
+			logger.info("Dimensions: {}", dimensions);
+			book.setDimensions(dimensions);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+
+		String language = null;
+		try {
+			// TODO
+			logger.info("Language: {}", language);
+		} catch(Exception e) {
+		}
+		book.setLanguage(language);
+
+		String edition = null;
+		try {
+			// TODO
+			logger.info("Edition: {}", edition);
+		} catch(Exception e) {
+		}
+		book.setEdition(edition);
+
+		String isbn10 = null;
+		try {
+			// TODO
+			logger.info("ISBN10: {}", isbn10);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setIsbn10(isbn10);
+
+		String isbn13 = null;
+		try {
+			// TODO
+			logger.info("ISBN13: {}", isbn13);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setIsbn13(isbn13);
+
+		String currency = null;
+		logger.info("Currency: [{}]", currency);
+
+		Price salePrice = null;
+		Price listPrice = null;
+		try {
+			// TODO
+			logger.info("Sale price: {}", salePrice);
+			logger.info("List price: {}", listPrice);
+		} catch(Exception e) {
+			throw new IOException("Malformed document");
+		}
+		book.setSalePrice(salePrice);
+		book.setListPrice(listPrice);
+		return book;
+	}
+
+	public static void main(String[] args) {
+		if (args.length != 1) {
+			System.err.printf("Usage: java %s <url>\n", BookParser.class.getName());
+			System.exit(1);
+		}
+		try {
+			Book book = new BookParser().parse(args[0]);
+			System.out.println(book);
+			JAXBUtil.toXML(book, System.out);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}

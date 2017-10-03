@@ -52,7 +52,17 @@ public class BookParser {
 		Book book = new Book();
 		ArrayList<Book.Author>	authors = new ArrayList<Book.Author>();
 		try {
-			// TODO
+			for (Element e : doc.select("div.item-info > div.author-info > a[itemprop=author]")) {
+				Book.Author author = new Book.Author();
+				author.setName(e.text().trim());
+				String role = "By (author)";
+				if (e.previousSibling() instanceof TextNode) {
+					role = ((TextNode) e.previousSibling()).text().trim();
+					role = role.replaceFirst("^,\\s*", "");
+				}
+				author.setRole(role);
+				authors.add(author);
+			}
 		} catch(Exception e) {
 			throw new IOException("Malformed document");
 		}

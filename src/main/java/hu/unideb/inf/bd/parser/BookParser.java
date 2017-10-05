@@ -11,12 +11,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -173,12 +175,22 @@ public class BookParser {
 		Price salePrice = null;
 		Price listPrice = null;
 		try {
-			// TODO (Benőcs Péter, Gecző Gergő)
-			logger.info("Sale price: {}", salePrice);
-			logger.info("List price: {}", listPrice);
-		} catch(Exception e) {
-			throw new IOException("Malformed document");
-		}
+			// TODO (Benőcs Péter, Gecző Gergő)  
+				Element eSalePrice = doc.select(" div.price > span[class=sale-price]").first(); 
+				Element eListPrice = doc.select(" div.price > span[class=list-price]").first();
+				String selectedCurrency = doc.select("div.currency-selector").first().attributes().get("title"); 
+				String sP = eSalePrice.text().trim();
+				String lP = eListPrice.text().trim(); 
+				sP = sP.replaceAll(" ", "").replaceAll("[^\\d.,]", "").trim();
+				lP = lP.replaceAll(" ", "").replaceAll("[^\\d.,]", "").trim();
+				salePrice = new Price(new BigDecimal(sP),selectedCurrency);	 
+				listPrice = new Price(new BigDecimal(lP),selectedCurrency); 
+				
+				logger.info("Sale price: {}", salePrice);
+				logger.info("List price: {}", listPrice);
+			} catch(Exception e) {
+				throw new IOException("Malformed document");
+			}
 		book.setSalePrice(salePrice);
 		book.setListPrice(listPrice);
 		return book;

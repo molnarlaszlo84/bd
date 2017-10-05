@@ -130,6 +130,7 @@ public class BookParser {
 		String language = null;
 		try {
 			// TODO (Szabó Dávid)
+                        language = doc.select("ul.meta-info > li > a[itemprop=inLanguage]").first().childNode(0).toString().trim();
 			logger.info("Language: {}", language);
 		} catch(Exception e) {
 		}

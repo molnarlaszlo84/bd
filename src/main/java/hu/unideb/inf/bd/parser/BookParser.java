@@ -121,8 +121,10 @@ public class BookParser {
 		Book.Dimensions	dimensions = new Book.Dimensions();
 		try {
 			// TODO (Váradi Sándor)
-			logger.info("Dimensions: {}", dimensions);
-			book.setDimensions(dimensions);
+                        String dimensionString = doc.select("ul.biblio-info > li > label:contains(Dimensions) + span").text().trim();
+                        dimensions = new Book.Dimensions(dimensionString);
+                        logger.info("Dimensions: {}", dimensions);
+                        book.setDimensions(dimensions);
 		} catch(Exception e) {
 			throw new IOException("Malformed document");
 		}

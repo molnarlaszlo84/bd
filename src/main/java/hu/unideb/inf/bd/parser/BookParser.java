@@ -174,6 +174,7 @@ public class BookParser {
 		String isbn13 = null;
 		try {
 			// TODO (Burai Péter)
+			isbn13 = doc.select("ul.biblio-info > li > span[itemprop=isbn]").first().text().trim();
 			logger.info("ISBN13: {}", isbn13);
 		} catch (Exception e) {
 			throw new IOException("Malformed document");

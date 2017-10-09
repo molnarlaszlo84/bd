@@ -34,7 +34,8 @@ import hu.unideb.inf.bd.model.Price;
 public class BookParser {
 
 	private static Logger logger = LoggerFactory.getLogger(BookParser.class);
-
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy").withLocale(Locale.ENGLISH);
+	
 	public BookParser() {
 	}
 
@@ -54,7 +55,7 @@ public class BookParser {
 
 	public Book parse(Document doc) throws IOException {
 		Book book = new Book();
-		ArrayList<Book.Author>	authors = new ArrayList<Book.Author>();
+		ArrayList<Book.Author> authors = new ArrayList<Book.Author>();
 		try {
 			for (Element e : doc.select("div.item-info > div.author-info > a[itemprop=author]")) {
 				Book.Author author = new Book.Author();
@@ -67,7 +68,7 @@ public class BookParser {
 				author.setRole(role);
 				authors.add(author);
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 		book.setAuthors(authors);
@@ -76,16 +77,16 @@ public class BookParser {
 		try {
 			title = doc.select("div.item-info > h1[itemprop=name]").first().text().trim();
 			logger.info("Title: {}", title);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 		book.setTitle(title);
 
 		String publisher = null;
 		try {
-			publisher = doc.select("ul.biblio-info > li > span >a[itemprop=publisher]").first().text().trim();
+			publisher = doc.select("ul.biblio-info > li > span > a[itemprop=publisher]").first().text().trim();
 			logger.info("Publisher: {}", publisher);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 		book.setPublisher(publisher);
@@ -93,48 +94,55 @@ public class BookParser {
 		LocalDate date = null;
 		try {
 			// TODO (Bódis Tünde)
+
+			String s = doc.select("ul.biblio-info > li > span[itemprop=datePublished]").first().text().trim();
+			date = LocalDate.parse(s, formatter);
 			logger.info("Date: {}", date);
-		} catch(Exception e) {
+			
+		} catch (Exception e) {
+			throw new IOException("Malformed document");
 		}
 		book.setDate(date);
 
 		String description = null;
 		try {
-			description = doc.select("div.item-description > div[itemprop=description]").first().childNode(0).toString().trim();
+			description = doc.select("div.item-description > div[itemprop=description]").first().childNode(0).toString()
+					.trim();
 			logger.info("Description: {}", description);
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 		book.setDescription(description);
 
 		String format = null;
-		Integer	pages = null;
+		Integer pages = null;
 		try {
 			// TODO (Molnár László)
 			logger.info("Format: {}", format);
 			logger.info("Pages: {}", pages);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 		book.setFormat(format);
 		book.setPages(pages);
 
-		Book.Dimensions	dimensions = new Book.Dimensions();
+		Book.Dimensions dimensions = new Book.Dimensions();
 		try {
 			// TODO (Váradi Sándor)
-                        String dimensionString = doc.select("ul.biblio-info > li > label:contains(Dimensions) + span").text().trim();
-                        dimensions = new Book.Dimensions(dimensionString);
-                        logger.info("Dimensions: {}", dimensions);
-                        book.setDimensions(dimensions);
-		} catch(Exception e) {
+			String dimensionString = doc.select("ul.biblio-info > li > label:contains(Dimensions) + span").text()
+					.trim();
+			dimensions = new Book.Dimensions(dimensionString);
+			logger.info("Dimensions: {}", dimensions);
+			book.setDimensions(dimensions);
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 
 		String language = null;
 		try {
 			// TODO (Szabó Dávid)
-                        language = doc.select("ul.meta-info > li > a[itemprop=inLanguage]").first().childNode(0).toString().trim();
+			language = doc.select("ul.meta-info > li > a[itemprop=inLanguage]").first().childNode(0).toString().trim();
 			logger.info("Language: {}", language);
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 		book.setLanguage(language);
 
@@ -142,23 +150,23 @@ public class BookParser {
 		try {
 			// TODO (Barta Ferenc)
 			logger.info("Edition: {}", edition);
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 		book.setEdition(edition);
 
 		String isbn10 = null;
 		try {
 			// TODO (Orbán István)
-			for(Element e : doc.select("ul.biblio-info > li")) {
-				Optional<Element> feltetelElement = e.getElementsByTag("label")
-						.stream().filter(it -> "ISBN10".equals(it.text())).findFirst();
+			for (Element e : doc.select("ul.biblio-info > li")) {
+				Optional<Element> feltetelElement = e.getElementsByTag("label").stream()
+						.filter(it -> "ISBN10".equals(it.text())).findFirst();
 				if (feltetelElement.isPresent()) {
 					isbn10 = feltetelElement.get().nextElementSibling().text().trim();
 				}
 			}
 
 			logger.info("ISBN10: {}", isbn10);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 		book.setIsbn10(isbn10);
@@ -167,7 +175,7 @@ public class BookParser {
 		try {
 			// TODO (Burai Péter)
 			logger.info("ISBN13: {}", isbn13);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new IOException("Malformed document");
 		}
 		book.setIsbn13(isbn13);
@@ -178,22 +186,22 @@ public class BookParser {
 		Price salePrice = null;
 		Price listPrice = null;
 		try {
-			// TODO (Benőcs Péter, Gecző Gergő)  
-				Element eSalePrice = doc.select(" div.price > span[class=sale-price]").first(); 
-				Element eListPrice = doc.select(" div.price > span[class=list-price]").first();
-				String selectedCurrency = doc.select("div.currency-selector").first().attributes().get("title"); 
-				String sP = eSalePrice.text().trim();
-				String lP = eListPrice.text().trim(); 
-				sP = sP.replaceAll(" ", "").replaceAll("[^\\d.,]", "").trim();
-				lP = lP.replaceAll(" ", "").replaceAll("[^\\d.,]", "").trim();
-				salePrice = new Price(new BigDecimal(sP),selectedCurrency);	 
-				listPrice = new Price(new BigDecimal(lP),selectedCurrency); 
-				
-				logger.info("Sale price: {}", salePrice);
-				logger.info("List price: {}", listPrice);
-			} catch(Exception e) {
-				throw new IOException("Malformed document");
-			}
+			// TODO (Benőcs Péter, Gecző Gergő)
+			Element eSalePrice = doc.select(" div.price > span[class=sale-price]").first();
+			Element eListPrice = doc.select(" div.price > span[class=list-price]").first();
+			String selectedCurrency = doc.select("div.currency-selector").first().attributes().get("title");
+			String sP = eSalePrice.text().trim();
+			String lP = eListPrice.text().trim();
+			sP = sP.replaceAll(" ", "").replaceAll("[^\\d.,]", "").trim();
+			lP = lP.replaceAll(" ", "").replaceAll("[^\\d.,]", "").trim();
+			salePrice = new Price(new BigDecimal(sP), selectedCurrency);
+			listPrice = new Price(new BigDecimal(lP), selectedCurrency);
+
+			logger.info("Sale price: {}", salePrice);
+			logger.info("List price: {}", listPrice);
+		} catch (Exception e) {
+			throw new IOException("Malformed document");
+		}
 		book.setSalePrice(salePrice);
 		book.setListPrice(listPrice);
 		return book;
@@ -208,7 +216,7 @@ public class BookParser {
 			Book book = new BookParser().parse(args[0]);
 			System.out.println(book);
 			JAXBUtil.toXML(book, System.out);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
